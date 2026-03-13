@@ -1,8 +1,22 @@
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def transform(df: pd.DataFrame) -> pd.DataFrame:
-    return (
+    """
+        Transforms raw patient data into a summary format.
+
+        Parameters:
+            df (pd.DataFrame): DataFrame containing the raw patient data.
+
+        Returns:
+            pd.DataFrame: DataFrame containing the transformed summary data.
+    """
+    logger.info(f"Starting transformation on {len(df)} records")
+
+    summary = (
         df
         .groupby(["gender", "diabetes_risk_category"])
         .agg(
@@ -15,3 +29,7 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
         )
         .reset_index()
     )
+
+    logger.info(f"Transformation complete. Generated {len(summary)} summary rows")
+
+    return summary
