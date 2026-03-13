@@ -26,9 +26,11 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
             avg_glucose=("fasting_glucose_level", "mean"),
             avg_calorie_intake=("daily_calorie_intake", "mean"),
             avg_stress_level=("stress_level", "mean"),
+            avg_sleep_hours=("sleep_hours", "mean")
         )
         .reset_index()
     )
+    summary = summary.round(2)
 
     logger.info(f"Transformation complete. Generated {len(summary)} summary rows")
 
