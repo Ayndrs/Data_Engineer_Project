@@ -6,16 +6,16 @@ from load import load
 
 class Pipeline:
     """
-    ETL pipeline for processing diabetes risk data.
+    ETL pipeline for processing diabetes risk data into a star schema.
 
     This pipeline performs the following steps:
     1. Extract data from a CSV file.
-    2. Transform the data into summary statistics grouped by gender and risk category.
-    3. Load the summary and pipeline lineage into a SQLite database.
+    2. Load the raw data into fact and dimension tables in a star schema.
+    3. Record pipeline lineage metadata.
 
     Attributes:
         csv_path (str): Path to the CSV file containing raw patient data.
-        lineage (dict): Dictionary storing metadata about the pipeline run, 
+        lineage (dict): Dictionary storing metadata about the pipeline run,
                         such as start/end times, run ID, and record counts.
     """
 
@@ -36,8 +36,8 @@ class Pipeline:
         Steps:
         1. Start lineage tracking.
         2. Extract data from CSV.
-        3. Transform the extracted data.
-        4. Load the transformed summary and lineage into the database.
+        3. Transform the extracted data into star schema dataframes.
+        4. Load the star schema dataframes into the database.
         5. End lineage tracking.
         """
         self._start_lineage()
@@ -45,10 +45,10 @@ class Pipeline:
         df = extract(self.csv_path)
         self.lineage["rows_extracted"] = len(df)
 
-        summary = transform(df)
-        self.lineage["rows_after_transform"] = len(summary)
+        schema_dataframes = transform(df)
+        self.lineage["rows_after_transform"] = len(schema_dataframes['fact_measurements'])
 
-        load(summary, self.lineage)
+        load(schema_dataframes, self.lineage)
 
         self._end_lineage()
 
