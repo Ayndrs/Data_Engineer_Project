@@ -29,11 +29,18 @@ def create_visualizations():
     risk_df = pd.read_sql(risk_query, conn)
 
     plt.figure(figsize=(10, 6))
-    plt.bar(risk_df['diabetes_risk_category'], risk_df['count'])
+    bars = plt.bar(risk_df['diabetes_risk_category'], risk_df['count'])
     plt.title('Distribution of Diabetes Risk Categories')
     plt.xlabel('Risk Category')
     plt.ylabel('Number of Patients')
     plt.xticks(rotation=45)
+
+    # Add value labels on bars
+    for bar in bars:
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2., height,
+                f'{int(height)}', ha='center', va='bottom')
+
     plt.tight_layout()
     plt.savefig('./graphs/risk_category_distribution.png', dpi=300, bbox_inches='tight')
     plt.close()
